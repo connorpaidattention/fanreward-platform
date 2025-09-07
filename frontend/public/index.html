@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FanReward - Earn Points for Your Music Passion</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%231A3C34'/><text x='50%' y='60%' text-anchor='middle' fill='%23D4A017' font-size='60' font-weight='bold'>F</text></svg>">
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading...</div>
+    </div>
+
+    <!-- Authentication Check -->
+    <div id="authCheck" class="auth-container" style="display: none;">
+        <div class="header">
+            <div class="logo">FanReward</div>
+            <div class="tagline">Earn points for your music passion</div>
+        </div>
+        
+        <div class="auth-section">
+            <h2>Welcome to FanReward!</h2>
+            <p>Connect your music accounts to start earning points for your passion.</p>
+            <div class="auth-buttons">
+                <button class="btn btn-spotify" onclick="startOAuth('spotify')">
+                    <span class="platform-icon">🎵</span>
+                    Continue with Spotify
+                </button>
+                <button class="btn btn-youtube" onclick="startOAuth('google')">
+                    <span class="platform-icon">📺</span>
+                    Continue with YouTube
+                </button>
+                <button class="btn btn-instagram" onclick="startOAuth('facebook')">
+                    <span class="platform-icon">📱</span>
+                    Continue with Instagram
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" style="display: none;">
+        <div class="status-bar">
+            <span id="statusIndicator" class="status-offline">● OFFLINE</span>
+        </div>
+
+        <div class="header">
+            <div class="user-info">
+                <div class="logo">FanReward</div>
+                <div class="user-greeting">Hello, <span id="userName">User</span>!</div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" onclick="showUserProfile()">👤</button>
+                <button class="btn-icon" onclick="logout()">🚪</button>
+            </div>
+        </div>
+
+        <div class="points-display">
+            <div class="points-number" id="pointsDisplay">0</div>
+            <div class="points-label">Total Points Earned</div>
+            <div class="points-breakdown" id="pointsBreakdown"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Connect Your Accounts</div>
+            
+            <div class="platform-card" id="spotifyCard">
+                <div class="platform-info">
+                    <div class="platform-icon spotify">🎵</div>
+                    <div>
+                        <div class="platform-name">Spotify</div>
+                        <div class="platform-status" id="spotifyStatus">Not connected</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="spotifyBtn" onclick="handlePlatformAction('spotify')">Connect</button>
+            </div>
+
+            <div class="platform-card" id="youtubeCard">
+                <div class="platform-info">
+                    <div class="platform-icon youtube">📺</div>
+                    <div>
+                        <div class="platform-name">YouTube</div>
+                        <div class="platform-status" id="youtubeStatus">Not connected</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="youtubeBtn" onclick="handlePlatformAction('google')">Connect</button>
+            </div>
+
+            <div class="platform-card" id="instagramCard">
+                <div class="platform-info">
+                    <div class="platform-icon instagram">📱</div>
+                    <div>
+                        <div class="platform-name">Instagram</div>
+                        <div class="platform-status" id="instagramStatus">Not connected</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="instagramBtn" onclick="handlePlatformAction('facebook')">Connect</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Live Music Tracking</div>
+            <div class="player-container" id="playerContainer">
+                <div class="player-placeholder">
+                    <div class="player-icon">🎵</div>
+                    <div class="player-text">Connect Spotify to start earning 3x points for live listening!</div>
+                </div>
+            </div>
+            <div class="player-controls">
+                <button class="btn btn-primary" onclick="startLiveTracking()" id="liveTrackBtn">Start Live Tracking</button>
+                <button class="btn btn-secondary" onclick="calculateHistoric()" id="historicBtn">Sync History</button>
+            </div>
+        </div>
+
+        <div class="earn-section">
+            <h3>How You Earn Points</h3>
+            <div class="multiplier-info">
+                <div class="multiplier-card">
+                    <div class="multiplier-value">1x</div>
+                    <div class="multiplier-label">Historic Plays</div>
+                </div>
+                <div class="multiplier-card">
+                    <div class="multiplier-value">2x</div>
+                    <div class="multiplier-label">Top Artists</div>
+                </div>
+                <div class="multiplier-card">
+                    <div class="multiplier-value">3x</div>
+                    <div class="multiplier-label">Live Tracking</div>
+                </div>
+            </div>
+            <div class="referral-section">
+                <p>Share your referral code: <strong id="referralCode">LOADING...</strong></p>
+                <button class="btn btn-gold" onclick="shareReferral()">Share & Earn 500 Points</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Recent Activity</div>
+            <div id="recentActivity">
+                <div class="activity-placeholder">No recent activity</div>
+            </div>
+            <div class="section-actions">
+                <button class="btn btn-outline" onclick="showRewardHistory()">View All Rewards</button>
+                <button class="btn btn-outline" onclick="showLeaderboard()">Leaderboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal Title</h3>
+                <button class="btn-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Modal content goes here
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2024 FanReward. Empowering fans and artists through engagement.
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app.js"></script>
+</body>
+</html>

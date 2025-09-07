@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FanReward Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%231A3C34'/><text x='50%' y='60%' text-anchor='middle' fill='%23D4A017' font-size='50' font-weight='bold'>A</text></svg>">
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading...</div>
+    </div>
+
+    <!-- Authentication Check -->
+    <div id="authCheck" class="auth-container" style="display: none;">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo">FanReward Admin</div>
+                <div class="tagline">Administrative Dashboard</div>
+            </div>
+            <div class="auth-form">
+                <h2>Admin Access Required</h2>
+                <p>Please authenticate with your admin credentials to access the dashboard.</p>
+                <div class="auth-buttons">
+                    <button class="btn btn-spotify" onclick="startOAuth('spotify')">
+                        <i class="fab fa-spotify"></i>
+                        Continue with Spotify
+                    </button>
+                    <button class="btn btn-youtube" onclick="startOAuth('google')">
+                        <i class="fab fa-youtube"></i>
+                        Continue with Google
+                    </button>
+                    <button class="btn btn-instagram" onclick="startOAuth('facebook')">
+                        <i class="fab fa-instagram"></i>
+                        Continue with Facebook
+                    </button>
+                </div>
+                <div class="auth-note">
+                    <i class="fas fa-shield-alt"></i>
+                    Only authorized admin accounts can access this dashboard
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="adminDashboard" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="header-left">
+                        <div class="logo">FanReward Admin</div>
+                        <div class="admin-badge">
+                            <i class="fas fa-shield-alt"></i>
+                            Administrator
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <div class="admin-info">
+                            <span class="admin-name" id="adminName">Admin</span>
+                            <div class="admin-actions">
+                                <button class="btn-icon" onclick="refreshDashboard()" title="Refresh">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <button class="btn-icon" onclick="logout()" title="Logout">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="sidebar" id="sidebar">
+            <div class="nav-menu">
+                <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#users" class="nav-item" onclick="showSection('users')">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="#platforms" class="nav-item" onclick="showSection('platforms')">
+                    <i class="fas fa-link"></i>
+                    <span>Platforms</span>
+                </a>
+                <a href="#rewards" class="nav-item" onclick="showSection('rewards')">
+                    <i class="fas fa-trophy"></i>
+                    <span>Rewards</span>
+                </a>
+                <a href="#system" class="nav-item" onclick="showSection('system')">
+                    <i class="fas fa-cog"></i>
+                    <span>System</span>
+                </a>
+                <a href="#audit" class="nav-item" onclick="showSection('audit')">
+                    <i class="fas fa-history"></i>
+                    <span>Audit Logs</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="section active">
+                <div class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="triggerManualSync()">
+                            <i class="fas fa-sync"></i>
+                            Manual Sync
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalUsers">0</div>
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-change positive" id="newUsers">+0 today</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="activeConnections">0</div>
+                            <div class="stat-label">Active Connections</div>
+                            <div class="stat-change positive" id="totalConnections">0 total</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalRewards">0</div>
+                            <div class="stat-label">Total Rewards</div>
+                            <div class="stat-change positive" id="recentRewards">+0 recent</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="activeSessions">0</div>
+                            <div class="stat-label">Live Sessions</div>
+                            <div class="stat-change positive" id="totalSessions">0 total</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Platform Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>User Activity</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Activity</h3>
+                            <button class="btn btn-outline" onclick="showSection('audit')">View All</button>
+                        </div>
+                        <div class="card-content">
+                            <div id="recentActivityList">
+                                <div class="loading-placeholder">Loading recent activity...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users-section" class="section">
+                <div class="section-header">
+                    <h1>User Management</h1>
+                    <div class="section-filters">
+                        <input type="text" class="search-input" placeholder="Search users..." id="userSearch">
+                        <select class="filter-select" id="userStatusFilter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="deleted">Deleted</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Points</th>
+                                <th>Platforms</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr class="loading-row">
+                                <td colspan="6">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="usersPagination">
+                    <!-- Pagination will be inserted here -->
+                </div>
+            </section>
+
+            <!-- Platforms Section -->
+            <section id="platforms-section" class="section">
+                <div class="section-header">
+                    <h1>Platform Statistics</h1>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="refreshPlatformStats()">
+                            <i class="fas fa-sync"></i>
+                            Refresh Stats
+                        </button>
+                    </div>
+                </div>
+
+                <div class="platform-cards">
+                    <div class="platform-card spotify">
+                        <div class="platform-header">
+                            <i class="fab fa-spotify"></i>
+                            <h3>Spotify</h3>
+                        </div>
+                        <div class="platform-stats">
+                            <div class="platform-stat">
+                                <span class="stat-value" id="spotifyConnections">0</span>
+                                <span class="stat-label">Connections</span>
+                            </div>
+                            <div class="platform-stat">
+                                <span class="stat-value" id="spotifyPoints">0</span>
+                                <span class="stat-label">Points Awarded</span>
+                            </div>
+                            <div class="platform-stat">
+                                <span class="stat-value" id="spotifyErrors">0</span>
+                                <span class="stat-label">Errors</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="platform-card youtube">
+                        <div class="platform-header">
+                            <i class="fab fa-youtube"></i>
+                            <h3>YouTube</h3>
+                        </div>
+                        <div class="platform-stats">
+                            <div class="platform-stat">
+                                <span class="stat-value" id="youtubeConnections">0</span>
+                                <span class="stat-label">Connections</span>
+                            </div>
+                            <div class="platform-stat">
+                                <span class="stat-value" id="youtubePoints">0</span>
+                                <span class="stat-label">Points Awarded</span>
+                            </div>
+                            <div class="platform-stat">
+                                <span class="stat-value" id="youtubeErrors">0</span>
+                                <span class="stat-label">Errors</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="platform-card instagram">
+                        <div class="platform-header">
+                            <i class="fab fa-instagram"></i>
+                            <h3>Instagram</h3>
+                        </div>
+                        <div class="platform-stats">
+                            <div class="platform-stat">
+                                <span class="stat-value" id="instagramConnections">0</span>
+                                <span class="stat-label">Connections</span>
+                            </div>
+                            <div class="platform-stat">
+                                <span class="stat-value" id="instagramPoints">0</span>
+                                <span class="stat-label">Points Awarded</span>
+                            </div>
+                            <div class="platform-stat">
+                                <span class="stat-value" id="instagramErrors">0</span>
+                                <span class="stat-label">Errors</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="platform-details">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Sync Performance</h3>
+                        </div>
+                        <div class="card-content">
+                            <canvas id="syncChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Section -->
+            <section id="system-section" class="section">
+                <div class="section-header">
+                    <h1>System Health</h1>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="checkSystemHealth()">
+                            <i class="fas fa-heartbeat"></i>
+                            Check Health
+                        </button>
+                    </div>
+                </div>
+
+                <div class="system-health">
+                    <div class="health-card">
+                        <div class="health-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="health-info">
+                            <h3>Server Status</h3>
+                            <div class="health-status healthy" id="serverStatus">Healthy</div>
+                            <div class="health-details">
+                                <div>Uptime: <span id="serverUptime">0m</span></div>
+                                <div>Memory: <span id="serverMemory">0 MB</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="health-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="health-info">
+                            <h3>Database</h3>
+                            <div class="health-status healthy" id="dbStatus">Connected</div>
+                            <div class="health-details">
+                                <div>Collections: <span id="dbCollections">0</span></div>
+                                <div>Documents: <span id="dbDocuments">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audit Logs Section -->
+            <section id="audit-section" class="section">
+                <div class="section-header">
+                    <h1>Audit Logs</h1>
+                    <div class="section-filters">
+                        <input type="text" class="search-input" placeholder="Search logs..." id="auditSearch">
+                        <select class="filter-select" id="auditActionFilter">
+                            <option value="">All Actions</option>
+                            <option value="manual">Manual</option>
+                            <option value="update">Update</option>
+                            <option value="delete">Delete</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table" id="auditTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Description</th>
+                                <th>Admin</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody">
+                            <tr class="loading-row">
+                                <td colspan="5">Loading audit logs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="auditPagination">
+                    <!-- Pagination will be inserted here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal Title</h3>
+                <button class="btn-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Modal content goes here
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="admin-api.js"></script>
+    <script src="admin-auth.js"></script>
+    <script src="admin-app.js"></script>
+</body>
+</html>

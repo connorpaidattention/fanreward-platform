@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: fanreward-platform
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: [Your MongoDB URI]
+      - key: SPOTIFY_CLIENT_ID
+        value: [Your Spotify Client ID]
+      - key: SPOTIFY_CLIENT_SECRET
+        value: [Your Spotify Client Secret]
+      - key: GOOGLE_CLIENT_ID
+        value: [Your Google Client ID]
+      - key: GOOGLE_CLIENT_SECRET
+        value: [Your Google Client Secret]
+      - key: JWT_SECRET
+        value: prod-jwt-secret-change-this-random-12345
+      - key: SESSION_SECRET
+        value: prod-session-secret-change-this-random-67890
+      - key: ENABLE_BACKGROUND_JOBS
+        value: true
