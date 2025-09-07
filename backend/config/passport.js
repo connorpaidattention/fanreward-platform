@@ -6,12 +6,20 @@ const { User, PlatformConnection } = require('../models');
 const { logger } = require('../utils/logger');
 
 const setupPassport = () => {
-  // Spotify OAuth
-  passport.use(new SpotifyStrategy({
-    clientID: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    callbackURL: process.env.SPOTIFY_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/spotify/callback"
-  }, async (accessToken, refreshToken, expires_in, profile, done) => {
+  // Log environment variables for debugging
+  console.log('Environment check:', {
+    spotifyClientId: process.env.SPOTIFY_CLIENT_ID ? 'SET' : 'MISSING',
+    googleClientId: process.env.GOOGLE_CLIENT_ID ? 'SET' : 'MISSING',
+    facebookAppId: process.env.FACEBOOK_APP_ID ? 'SET' : 'MISSING'
+  });
+
+  // Spotify OAuth - only set up if credentials are available
+  if (process.env.SPOTIFY_CLIENT_ID && process.env.SPOTIFY_CLIENT_SECRET) {
+    passport.use(new SpotifyStrategy({
+      clientID: process.env.SPOTIFY_CLIENT_ID,
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+      callbackURL: process.env.SPOTIFY_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/spotify/callback"
+    }, async (accessToken, refreshToken, expires_in, profile, done) => {
     try {
       let user = await User.findOne({ spotifyId: profile.id });
       
@@ -94,13 +102,17 @@ const setupPassport = () => {
       return done(error, null);
     }
   }));
+  } else {
+    logger.warn('Spotify OAuth not configured - missing client credentials');
+  }
 
-  // Google OAuth (for YouTube)
-  passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/google/callback"
-  }, async (accessToken, refreshToken, profile, done) => {
+  // Google OAuth (for YouTube) - only set up if credentials are available
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    passport.use(new GoogleStrategy({
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/google/callback"
+    }, async (accessToken, refreshToken, profile, done) => {
     try {
       let user = await User.findOne({ googleId: profile.id });
       
@@ -172,14 +184,18 @@ const setupPassport = () => {
       return done(error, null);
     }
   }));
+  } else {
+    logger.warn('Google OAuth not configured - missing client credentials');
+  }
 
-  // Facebook OAuth (for Instagram)
-  passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_APP_ID,
-    clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: process.env.FACEBOOK_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/facebook/callback",
-    profileFields: ['id', 'emails', 'name', 'picture']
-  }, async (accessToken, refreshToken, profile, done) => {
+  // Facebook OAuth (for Instagram) - only set up if credentials are available
+  if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
+    passport.use(new FacebookStrategy({
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: process.env.FACEBOOK_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/facebook/callback",
+      profileFields: ['id', 'emails', 'name', 'picture']
+    }, async (accessToken, refreshToken, profile, done) => {
     try {
       let user = await User.findOne({ facebookId: profile.id });
       
@@ -254,6 +270,9 @@ const setupPassport = () => {
       return done(error, null);
     }
   }));
+  } else {
+    logger.warn('Facebook OAuth not configured - missing client credentials');
+  }
 
   passport.serializeUser((user, done) => {
     done(null, user._id);
