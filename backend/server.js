@@ -231,8 +231,10 @@ if (process.env.ENABLE_BACKGROUND_JOBS === 'true') {
 }
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  logger.info(`FanReward Platform server running on port ${PORT}`);
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+server.listen(PORT, HOST, () => {
+  logger.info(`FanReward Platform server running on ${HOST}:${PORT}`);
 });
 
 module.exports = { app, io, server };
