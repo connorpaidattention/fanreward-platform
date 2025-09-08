@@ -12,6 +12,16 @@ const compression = require('compression');
 const morgan = require('morgan');
 require('dotenv').config();
 
+// Force Railway environment variables to be loaded correctly
+console.log('=== RAILWAY ENVIRONMENT DEBUG ===');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT);
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'SET' : 'MISSING');
+console.log('SPOTIFY_CLIENT_ID:', process.env.SPOTIFY_CLIENT_ID ? 'SET' : 'MISSING');
+console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'SET' : 'MISSING');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'SET' : 'MISSING');
+console.log('================================');
+
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const rewardRoutes = require('./routes/rewards');

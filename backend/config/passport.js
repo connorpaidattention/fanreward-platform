@@ -12,6 +12,12 @@ const setupPassport = () => {
     googleClientId: process.env.GOOGLE_CLIENT_ID ? 'SET' : 'MISSING',
     facebookAppId: process.env.FACEBOOK_APP_ID ? 'SET' : 'MISSING'
   });
+  
+  // Don't crash the server if OAuth credentials are missing - just log warnings
+  console.log('OAuth setup status:');
+  console.log('- Spotify:', process.env.SPOTIFY_CLIENT_ID && process.env.SPOTIFY_CLIENT_SECRET ? 'ENABLED' : 'DISABLED');
+  console.log('- Google:', process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? 'ENABLED' : 'DISABLED');
+  console.log('- Facebook:', process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET ? 'ENABLED' : 'DISABLED');
 
   // Spotify OAuth - only set up if credentials are available
   if (process.env.SPOTIFY_CLIENT_ID && process.env.SPOTIFY_CLIENT_SECRET) {
