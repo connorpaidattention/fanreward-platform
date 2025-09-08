@@ -38,8 +38,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      process.env.FRONTEND_URL || "http://127.0.0.1:8080",
-      process.env.ADMIN_URL || "http://127.0.0.1:8081"
+      process.env.FRONTEND_URL || "https://www.paidattention.xyz",
+      process.env.ADMIN_URL || "https://www.paidattention.xyz/admin"
     ],
     methods: ["GET", "POST"],
     credentials: true
@@ -73,8 +73,8 @@ app.use('/api/', limiter);
 
 app.use(cors({
   origin: [
-    process.env.FRONTEND_URL || "http://127.0.0.1:8080",
-    process.env.ADMIN_URL || "http://127.0.0.1:8081"
+    process.env.FRONTEND_URL || "https://www.paidattention.xyz",
+    process.env.ADMIN_URL || "https://www.paidattention.xyz/admin"
   ],
   credentials: true
 }));

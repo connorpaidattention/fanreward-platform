@@ -267,7 +267,7 @@ router.get('/referral', authenticateToken, async (req, res) => {
       referralCode: user.referralCode,
       referralCount: user.referralCount || 0,
       referredUsers,
-      referralUrl: `${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/?ref=${user.referralCode}`
+      referralUrl: `${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?ref=${user.referralCode}`
     });
   } catch (error) {
     logger.error('Error fetching referral info:', error);
