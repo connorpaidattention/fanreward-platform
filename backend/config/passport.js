@@ -101,6 +101,17 @@ const setupPassport = () => {
         { upsert: true, new: true }
       );
       
+      // Trigger historic sync to calculate initial points
+      const { calculateHistoricRewards } = require('../services/rewardService');
+      setTimeout(async () => {
+        try {
+          await calculateHistoricRewards(user, 'spotify');
+          logger.info(`Historic sync completed for new Spotify user ${user._id}`);
+        } catch (syncError) {
+          logger.error(`Historic sync failed for user ${user._id}:`, syncError);
+        }
+      }, 2000); // 2 second delay to ensure OAuth completes first
+      
       logger.info(`Spotify OAuth successful for user ${user._id}`);
       return done(null, user);
     } catch (error) {
@@ -183,6 +194,17 @@ const setupPassport = () => {
         },
         { upsert: true, new: true }
       );
+      
+      // Trigger historic sync to calculate initial points
+      const { calculateHistoricRewards } = require('../services/rewardService');
+      setTimeout(async () => {
+        try {
+          await calculateHistoricRewards(user, 'youtube');
+          logger.info(`Historic sync completed for new YouTube user ${user._id}`);
+        } catch (syncError) {
+          logger.error(`Historic sync failed for user ${user._id}:`, syncError);
+        }
+      }, 2000); // 2 second delay to ensure OAuth completes first
       
       logger.info(`Google OAuth successful for user ${user._id}`);
       return done(null, user);
@@ -270,6 +292,17 @@ const setupPassport = () => {
         },
         { upsert: true, new: true }
       );
+      
+      // Trigger historic sync to calculate initial points
+      const { calculateHistoricRewards } = require('../services/rewardService');
+      setTimeout(async () => {
+        try {
+          await calculateHistoricRewards(user, 'instagram');
+          logger.info(`Historic sync completed for new Instagram user ${user._id}`);
+        } catch (syncError) {
+          logger.error(`Historic sync failed for user ${user._id}:`, syncError);
+        }
+      }, 2000); // 2 second delay to ensure OAuth completes first
       
       logger.info(`Facebook OAuth successful for user ${user._id}`);
       return done(null, user);
