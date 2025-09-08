@@ -24,7 +24,7 @@ const setupPassport = () => {
     passport.use(new SpotifyStrategy({
       clientID: process.env.SPOTIFY_CLIENT_ID,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-      callbackURL: process.env.SPOTIFY_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/spotify/callback"
+      callbackURL: process.env.SPOTIFY_REDIRECT_URI || "https://www.paidattention.xyz/api/auth/spotify/callback"
     }, async (accessToken, refreshToken, expires_in, profile, done) => {
     try {
       let user = await User.findOne({ spotifyId: profile.id });
@@ -118,7 +118,7 @@ const setupPassport = () => {
     passport.use(new GoogleStrategy({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/google/callback"
+      callbackURL: process.env.GOOGLE_REDIRECT_URI || "https://www.paidattention.xyz/api/auth/google/callback"
     }, async (accessToken, refreshToken, profile, done) => {
     try {
       let user = await User.findOne({ googleId: profile.id });
@@ -201,7 +201,7 @@ const setupPassport = () => {
     passport.use(new FacebookStrategy({
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: process.env.FACEBOOK_REDIRECT_URI || "http://127.0.0.1:3000/api/auth/facebook/callback",
+      callbackURL: process.env.FACEBOOK_REDIRECT_URI || "https://www.paidattention.xyz/api/auth/facebook/callback",
       profileFields: ['id', 'emails', 'name', 'picture']
     }, async (accessToken, refreshToken, profile, done) => {
     try {
