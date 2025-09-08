@@ -20,17 +20,17 @@ router.get('/spotify',
 );
 
 router.get('/spotify/callback', 
-  passport.authenticate('spotify', { failureRedirect: `${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/login?error=spotify_failed` }),
+  passport.authenticate('spotify', { failureRedirect: `${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?error=spotify_failed` }),
   async (req, res) => {
     try {
       const token = generateJWT(req.user._id);
-      const redirectUrl = `${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/dashboard?token=${token}&connected=spotify&success=true`;
+      const redirectUrl = `${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?token=${token}&connected=spotify&success=true`;
       
       logger.info(`Spotify OAuth successful for user ${req.user._id}`);
       res.redirect(redirectUrl);
     } catch (error) {
       logger.error('Spotify callback error:', error);
-      res.redirect(`${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/login?error=spotify_callback_failed`);
+      res.redirect(`${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?error=spotify_callback_failed`);
     }
   }
 );
@@ -47,17 +47,17 @@ router.get('/google',
 );
 
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: `${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/login?error=google_failed` }),
+  passport.authenticate('google', { failureRedirect: `${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?error=google_failed` }),
   async (req, res) => {
     try {
       const token = generateJWT(req.user._id);
-      const redirectUrl = `${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/dashboard?token=${token}&connected=youtube&success=true`;
+      const redirectUrl = `${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?token=${token}&connected=youtube&success=true`;
       
       logger.info(`Google OAuth successful for user ${req.user._id}`);
       res.redirect(redirectUrl);
     } catch (error) {
       logger.error('Google callback error:', error);
-      res.redirect(`${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/login?error=google_callback_failed`);
+      res.redirect(`${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?error=google_callback_failed`);
     }
   }
 );
@@ -74,17 +74,17 @@ router.get('/facebook',
 );
 
 router.get('/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: `${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/login?error=facebook_failed` }),
+  passport.authenticate('facebook', { failureRedirect: `${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?error=facebook_failed` }),
   async (req, res) => {
     try {
       const token = generateJWT(req.user._id);
-      const redirectUrl = `${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/dashboard?token=${token}&connected=instagram&success=true`;
+      const redirectUrl = `${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?token=${token}&connected=instagram&success=true`;
       
       logger.info(`Facebook OAuth successful for user ${req.user._id}`);
       res.redirect(redirectUrl);
     } catch (error) {
       logger.error('Facebook callback error:', error);
-      res.redirect(`${process.env.FRONTEND_URL || 'http://127.0.0.1:8080'}/login?error=facebook_callback_failed`);
+      res.redirect(`${process.env.FRONTEND_URL || 'https://www.paidattention.xyz'}/?error=facebook_callback_failed`);
     }
   }
 );
