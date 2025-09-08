@@ -75,7 +75,10 @@
                         <div class="platform-status" id="spotifyStatus">Not connected</div>
                     </div>
                 </div>
-                <button class="btn btn-secondary" id="spotifyBtn" onclick="handlePlatformAction('spotify')">Connect</button>
+                <div class="platform-actions">
+                    <button class="btn btn-secondary" id="spotifyBtn" onclick="handlePlatformAction('spotify')">Connect</button>
+                    <button class="btn btn-sync" id="spotifySyncBtn" onclick="syncPlatform('spotify')" style="display: none;">Sync Points</button>
+                </div>
             </div>
 
             <div class="platform-card" id="youtubeCard">
@@ -86,7 +89,10 @@
                         <div class="platform-status" id="youtubeStatus">Not connected</div>
                     </div>
                 </div>
-                <button class="btn btn-secondary" id="youtubeBtn" onclick="handlePlatformAction('google')">Connect</button>
+                <div class="platform-actions">
+                    <button class="btn btn-secondary" id="youtubeBtn" onclick="handlePlatformAction('google')">Connect</button>
+                    <button class="btn btn-sync" id="youtubeSyncBtn" onclick="syncPlatform('youtube')" style="display: none;">Sync Points</button>
+                </div>
             </div>
 
             <div class="platform-card" id="instagramCard">
@@ -97,7 +103,10 @@
                         <div class="platform-status" id="instagramStatus">Not connected</div>
                     </div>
                 </div>
-                <button class="btn btn-secondary" id="instagramBtn" onclick="handlePlatformAction('facebook')">Connect</button>
+                <div class="platform-actions">
+                    <button class="btn btn-secondary" id="instagramBtn" onclick="handlePlatformAction('facebook')">Connect</button>
+                    <button class="btn btn-sync" id="instagramSyncBtn" onclick="syncPlatform('instagram')" style="display: none;">Sync Points</button>
+                </div>
             </div>
         </div>
 

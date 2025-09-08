@@ -120,6 +120,12 @@ class FanRewardApp {
                 if (cardEl) {
                     cardEl.classList.add('connected');
                 }
+                
+                // Show sync button for connected platforms
+                const syncBtnEl = document.getElementById(`${platform}SyncBtn`);
+                if (syncBtnEl) {
+                    syncBtnEl.style.display = 'inline-block';
+                }
             } else {
                 if (statusEl) {
                     statusEl.textContent = 'Not connected';
@@ -131,6 +137,12 @@ class FanRewardApp {
                 }
                 if (cardEl) {
                     cardEl.classList.remove('connected');
+                }
+                
+                // Hide sync button for disconnected platforms
+                const syncBtnEl = document.getElementById(`${platform}SyncBtn`);
+                if (syncBtnEl) {
+                    syncBtnEl.style.display = 'none';
                 }
             }
         });
@@ -615,6 +627,44 @@ function closeModal() {
     modal.classList.remove('show');
 }
 
+// Manual Sync Function
+async function syncPlatform(platform) {
+    const syncBtn = document.getElementById(`${platform}SyncBtn`);
+    const originalText = syncBtn.textContent;
+    
+    try {
+        syncBtn.textContent = 'Syncing...';
+        syncBtn.disabled = true;
+        
+        const response = await PlatformsAPI.manualSync(platform);
+        
+        if (response.success) {
+            showNotification(`${response.message} (${response.pointsAwarded} points!)`, 'success');
+            
+            // Refresh user data to show updated points
+            if (window.app) {
+                await window.app.loadUserData();
+                await window.app.loadPlatformData();
+            }
+        } else {
+            showNotification(response.error || `Failed to sync ${platform}`, 'error');
+        }
+    } catch (error) {
+        console.error(`Sync error for ${platform}:`, error);
+        
+        if (error.message && error.message.includes('rate limit')) {
+            showNotification('Please wait before syncing again (rate limit)', 'warning');
+        } else if (error.message && error.message.includes('expired')) {
+            showNotification(`Your ${platform} connection has expired. Please reconnect.`, 'error');
+        } else {
+            showNotification(`Failed to sync ${platform} data`, 'error');
+        }
+    } finally {
+        syncBtn.textContent = originalText;
+        syncBtn.disabled = false;
+    }
+}
+
 // Initialize app when DOM is loaded
 let app;
 document.addEventListener('DOMContentLoaded', () => {
@@ -625,6 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Global functions for HTML
 window.startLiveTracking = startLiveTracking;
 window.calculateHistoric = calculateHistoric;
+window.syncPlatform = syncPlatform;
 window.showUserProfile = showUserProfile;
 window.showRewardHistory = showRewardHistory;
 window.showLeaderboard = showLeaderboard;

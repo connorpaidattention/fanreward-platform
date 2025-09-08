@@ -215,6 +215,11 @@ body {
     align-items: center;
 }
 
+.platform-actions {
+    display: flex;
+    align-items: center;
+}
+
 .platform-icon {
     width: 40px;
     height: 40px;
@@ -299,6 +304,18 @@ body {
     background: #D4A017;
     color: #FFFFFF;
     cursor: default;
+}
+
+.btn-sync {
+    background: #28a745;
+    color: #FFFFFF;
+    padding: 8px 16px;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.btn-sync:hover:not(:disabled) {
+    background: #218838;
 }
 
 .btn-gold {
