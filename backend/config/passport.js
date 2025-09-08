@@ -110,6 +110,7 @@ const setupPassport = () => {
   }));
   } else {
     logger.warn('Spotify OAuth not configured - missing client credentials');
+    console.log('⚠️ Spotify OAuth DISABLED - demo will work without it');
   }
 
   // Google OAuth (for YouTube) - only set up if credentials are available
@@ -192,6 +193,7 @@ const setupPassport = () => {
   }));
   } else {
     logger.warn('Google OAuth not configured - missing client credentials');
+    console.log('⚠️ Google OAuth DISABLED - demo will work without it');
   }
 
   // Facebook OAuth (for Instagram) - only set up if credentials are available
@@ -278,6 +280,7 @@ const setupPassport = () => {
   }));
   } else {
     logger.warn('Facebook OAuth not configured - missing client credentials');
+    console.log('⚠️ Facebook OAuth DISABLED - demo will work without it');
   }
 
   passport.serializeUser((user, done) => {
