@@ -123,11 +123,20 @@ class AuthManager {
 
 // OAuth Functions
 function startOAuth(platform) {
-    showNotification(`Redirecting to ${platform}...`, 'info');
+    console.log('startOAuth called with platform:', platform);
+    console.log('API_BASE_URL:', API_BASE_URL);
+    
+    // Show notification if function exists, otherwise use alert
+    if (typeof showNotification === 'function') {
+        showNotification(`Redirecting to ${platform}...`, 'info');
+    } else {
+        alert(`Redirecting to ${platform}...`);
+    }
     
     // Add small delay for better UX
     setTimeout(() => {
         const authUrl = `${API_BASE_URL}/api/auth/${platform}`;
+        console.log('Redirecting to:', authUrl);
         window.location.href = authUrl;
     }, 500);
 }
@@ -243,10 +252,16 @@ async function disconnectPlatform(platform) {
 // Initialize auth manager
 const authManager = new AuthManager();
 
-// Global functions for HTML onclick handlers
+// Global functions for HTML onclick handlers - ensure they're available
 window.startOAuth = startOAuth;
 window.handlePlatformAction = handlePlatformAction;
 window.logout = () => authManager.logout();
+
+// Additional explicit global assignments for debugging
+if (typeof window !== 'undefined') {
+    window.startOAuth = startOAuth;
+    window.handlePlatformAction = handlePlatformAction;
+}
 
 // Export for other modules
 window.authManager = authManager;
